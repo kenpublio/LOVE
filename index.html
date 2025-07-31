@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Girlfriend's Day!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff5f7;
+            color: #5a3a3a;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+        
+        .slides-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+        
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            overflow-y: auto;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            color: #ff2d75;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        p {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+        
+        .emoji {
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            vertical-align: middle;
+            margin: 0 5px;
+        }
+        
+        .btn {
+            background-color: #ff6b8b;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 139, 0.4);
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background-color: #ff2d75;
+            transform: translateY(-3px);
+        }
+        
+        /* Slide 2 - Flowers */
+        .flowers-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            max-width: 600px;
+        }
+        
+        .flower {
+            font-size: clamp(2rem, 8vw, 4rem);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* Slide 3 - Envelope */
+        .envelope-wrapper {
+            position: relative;
+            width: clamp(300px, 80vw, 500px);
+            height: clamp(180px, 50vw, 300px);
+            margin: 30px 0;
+            perspective: 2000px;
+        }
+        
+        .envelope-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+        }
+        
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #f8bbd0;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform-origin: bottom;
+        }
+        
+        .envelope:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f48fb1;
+            clip-path: polygon(0 0, 50% 50%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.8s ease;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .letter {
+            position: absolute;
+            width: 90%;
+            height: 85%;
+            background-color: white;
+            top: 10px;
+            left: 5%;
+            border-radius: 8px;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) inset;
+            z-index: -1;
+            opacity: 0;
+            transition: all 0.8s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .letter-content {
+            transform: rotate(0deg);
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            padding: 15px;
+        }
+        
+        .letter p {
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            text-align: left;
+            padding: 0;
+        }
+        
+        .envelope-container.open {
+            transform: translateY(-50px);
+        }
+        
+        .envelope-container.open .letter {
+            opacity: 1;
+            z-index: 2;
+            transform: translateY(-50px);
+        }
+        
+        /* Slide 4 - Photo */
+        .photo-frame {
+            width: clamp(250px, 80vw, 400px);
+            height: clamp(250px, 80vw, 400px);
+            border-radius: 20px;
+            background-color: white;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 10px solid #ffccd5;
+        }
+        
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: #ffecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            color: #ff6b8b;
+        }
+        
+        /* Navigation dots */
+        .nav-dots {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ffb6c1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .dot.active {
+            background-color: #ff2d75;
+            transform: scale(1.2);
+        }
+        
+        /* Background hearts */
+        .bg-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 107, 139, 0.3);
+            animation: float-heart 10s linear infinite;
+        }
+        
+        @keyframes float-heart {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Swipe instructions for mobile */
+        .swipe-hint {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff6b8b;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            opacity: 0.7;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .swipe-hint {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-hearts" id="bgHearts"></div>
+    
+    <div class="slides-container">
+        <!-- Slide 1 - Greeting -->
+        <div class="slide active" id="slide1">
+            <h1>Happy Girlfriend's Day, My Love! <span class="emoji">💖</span></h1>
+            <p>Today and every day is special because I get to call you mine</p>
+            <button class="btn" onclick="nextSlide()">Next</button>
+        </div>
+        
+        <!-- Slide 2 - Flowers -->
+        <div class="slide" id="slide2">
+            <h1>For You, My Flower <span class="emoji">🌷</span></h1>
+            <p>These are for you, because you deserve the prettiest things in life <span class="emoji">🌸</span></p>
+            
+            <div class="flowers-container">
+                <div class="flower" style="animation-delay: 0s;">🌹</div>
+                <div class="flower" style="animation-delay: 0.2s;">🌺</div>
+                <div class="flower" style="animation-delay: 0.4s;">🌸</div>
+                <div class="flower" style="animation-delay: 0.6s;">💐</div>
+                <div class="flower" style="animation-delay: 0.8s;">🌻</div>
+            </div>
+            
+            <button class="btn" onclick="nextSlide()">Next</button>
+        </div>
+        
+        <!-- Slide 3 - Love Letter -->
+        <div class="slide" id="slide3">
+            <h1>A Little Note For You <span class="emoji">💌</span></h1>
+            <p>Click the envelope to open my love letter</p>
+            
+            <div class="envelope-wrapper">
+                <div class="envelope-container" id="envelope">
+                    <div class="envelope"></div>
+                    <div class="letter">
+                        <div class="letter-content">
+                            <p>My Palanggaa,<br><br>
+                            On this special Girlfriend's Day, I want you to know how incredibly grateful I am to have you in my life. Your smile brightens my darkest days, and your love fills my heart with joy. And pasensya sa tanan nako problema ihatag bby sorry sa tanan bby ug unta puhon ma okay rani nato tanan promblema unta kita jud sa hantud sa hanturan bby ikaw ra akoa gusto ikaw ra wanay lain pa bbyyy ikaw rajud bbbyyy ikaw ra ako lab2.<br><br>
+                            Thank you for being you for your kindness, your laughter, and the way you make every moment special. I cherish you more than words can say.<br><br>
+                            Forever yours,<br>
+                            <span style="font-family: 'Dancing Script', cursive; color: #ff2d75;">Gwapo na Uyab</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="nextSlide()">Next</button>
+        </div>
+        
+        <!-- Slide 4 - Photo -->
+        <div class="slide" id="slide4">
+            <h1>My Favorite Memory <span class="emoji">📸</span></h1>
+            <p>This is us nd I wouldn't trade it for the world. I love you! ato picture atong nag balik tag date<span class="emoji">💕</span></p>
+            
+            <div class="photo-frame">
+                <div class="photo-placeholder">
+                    <img src="/ewew.jpg" alt="Description of the image" width="1100" height="400">
+                </div>
+            </div>
+            
+            <button class="btn" onclick="restartSlides()">Start Again</button>
+        </div>
+    </div>
+
+    <div class="nav-dots" id="navDots">
+        <div class="dot active" onclick="goToSlide(1)"></div>
+        <div class="dot" onclick="goToSlide(2)"></div>
+        <div class="dot" onclick="goToSlide(3)"></div>
+        <div class="dot" onclick="goToSlide(4)"></div>
+    </div>
+    
+    <div class="swipe-hint">Swipe or use buttons to navigate</div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 4;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        // Create background hearts
+        function createHearts() {
+            const bgHearts = document.getElementById('bgHearts');
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.classList.add('heart');
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = Math.random() * 10 + 10 + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+                bgHearts.appendChild(heart);
+            }
+        }
+        
+        // Initialize envelope
+        function initEnvelope() {
+            const envelope = document.getElementById('envelope');
+            envelope.addEventListener('click', function() {
+                this.classList.toggle('open');
+            });
+        }
+        
+        // Change slide
+        function nextSlide() {
+            document.getElementById(`slide${currentSlide}`).classList.remove('active');
+            currentSlide = currentSlide % totalSlides + 1;
+            document.getElementById(`slide${currentSlide}`).classList.add('active');
+            updateDots();
+            
+            // Close envelope if moving away from slide 3
+            if (currentSlide !== 3) {
+                const envelope = document.getElementById('envelope');
+                if (envelope.classList.contains('open')) {
+                    envelope.classList.remove('open');
+                }
+            }
+        }
+        
+        function prevSlide() {
+            document.getElementById(`slide${currentSlide}`).classList.remove('active');
+            currentSlide = (currentSlide - 2 + totalSlides) % totalSlides + 1;
+            document.getElementById(`slide${currentSlide}`).classList.add('active');
+            updateDots();
+            
+            // Close envelope if moving away from slide 3
+            if (currentSlide !== 3) {
+                const envelope = document.getElementById('envelope');
+                if (envelope.classList.contains('open')) {
+                    envelope.classList.remove('open');
+                }
+            }
+        }
+        
+        // Go to specific slide
+        function goToSlide(slideNum) {
+            document.getElementById(`slide${currentSlide}`).classList.remove('active');
+            currentSlide = slideNum;
+            document.getElementById(`slide${currentSlide}`).classList.add('active');
+            updateDots();
+            
+            // Close envelope if moving away from slide 3
+            if (currentSlide !== 3) {
+                const envelope = document.getElementById('envelope');
+                if (envelope.classList.contains('open')) {
+                    envelope.classList.remove('open');
+                }
+            }
+        }
+        
+        // Restart slides
+        function restartSlides() {
+            document.getElementById(`slide${currentSlide}`).classList.remove('active');
+            currentSlide = 1;
+            document.getElementById(`slide${currentSlide}`).classList.add('active');
+            updateDots();
+            
+            // Reset envelope if it was opened
+            const envelope = document.getElementById('envelope');
+            if (envelope.classList.contains('open')) {
+                envelope.classList.remove('open');
+            }
+        }
+        
+        // Update navigation dots
+        function updateDots() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if (index === currentSlide - 1) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        // Touch events for mobile swipe
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
+        
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }
+        
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                nextSlide();
+            } else if (touchEndX > touchStartX + 50) {
+                prevSlide();
+            }
+        }
+        
+        // Initialize
+        window.onload = function() {
+            createHearts();
+            initEnvelope();
+            updateDots();
+            
+            // Touch events
+            document.addEventListener('touchstart', handleTouchStart, false);
+            document.addEventListener('touchend', handleTouchEnd, false);
+            
+            // Recreate hearts periodically
+            setInterval(() => {
+                document.getElementById('bgHearts').innerHTML = '';
+                createHearts();
+            }, 15000);
+        };
+    </script>
+</body>
+</html>
